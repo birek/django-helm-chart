@@ -22,8 +22,12 @@ spec:
     {{- end }}
       serviceAccountName: {{ include "django.serviceAccountName" . }}
       restartPolicy: Never
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
       - name: pre-install-job
+        securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["./manage.py","migrate"]
