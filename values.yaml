@@ -11,13 +11,13 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-preInstall:
+migrationJob:
   enabled: true
+  command: []  # Default ./manage.py migrate
   activeDeadlineSeconds: 900
   resources:
     limits: {}
     requests: {}
-
 
 env:
   normal: {}
@@ -27,6 +27,8 @@ env:
     # REDIS_URL:
 
 existingSecret: ""
+extraVolumeMounts: []
+extraVolumes: []
 
 web:
   replicaCount: 2

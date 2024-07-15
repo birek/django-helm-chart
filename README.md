@@ -1,8 +1,8 @@
 # Django Helm Chart
 
-A generic Django (plus Celery) Helm chart.
+A generic Django (plus Celery) Helm chart demonstration. Do not use directly in production.
 
-Contributions are welcome as merge requests. Please only open issues that you'd like to implement yourself or fund. Do not open support or feature requests. This chart is **not** intended to cover every use case with Django and Helm. It's a personal project that you are welcome to view and fork. Breaking changes to your workflow may happen at any time and without warning. 
+Contributions may be accepted as merge requests. Be respectful of my time. I will not review if I do not have time. Fork the project instead. Please only open issues that you'd like to implement yourself or fund. Do not open support or feature requests. This chart is **not** intended to cover every use case with Django and Helm. It's a personal project that you are welcome to view and fork. Breaking changes to your workflow may happen at any time and without warning.
 
 # Preparing your Django app
 
@@ -39,6 +39,8 @@ Remember that Kubernetes "args" are Docker's CMD (or command). Pretty confusing!
 
 # Usage
 
+Use only for demonstration purposes. Fork the repo for production.
+
 1. Add our Helm chart repo `helm repo add django https://gitlab.com/api/v4/projects/26807467/packages/helm/stable`
 2. Review our values.yaml. At a minimum you'll need to set env.secret.SECRET_KEY and env.secret.DATABASE_URL.
 3. Install the chart `helm install your-app django/django -f your-values.yml`
@@ -56,6 +58,7 @@ I suggest either
 - Keep them in a values.yml file in a private repo
 - Make use of --reuse-values and --set
 - Keep them in a non helm chart managed service
+- Use the opentofu helm provider, with a secure state backend or encrypted state.
 
 ## Deploying in CI
 
@@ -69,3 +72,5 @@ Maintaining this chart takes time. Considering supporting it by
 - Check out [GlitchTip](https://glitchtip.com) error tracking, which is where this project started
 
 Commercial support is available - email info@burkesoftware.com
+
+If you want the scope of this project to include more, such as better merge request review or stable releases. You should consider forking it, talk to me about being a maintainer, or fund it.

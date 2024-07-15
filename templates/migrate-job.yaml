@@ -1,8 +1,8 @@
-{{- if .Values.preInstall.enabled -}}
+{{- if .Values.migrationJob.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "django.fullname" . }}
+  name: {{ include "django.fullname" . }}-migrate
   labels:
     {{- include "django.labels" . | nindent 4 }}
   annotations:
@@ -13,8 +13,12 @@ metadata:
     checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     tag: "{{ .Values.image.tag }}"
 spec:
-  activeDeadlineSeconds: {{ default 900 .Values.preInstall.activeDeadlineSeconds }}
+  activeDeadlineSeconds: {{ default 900 .Values.migrationJob.activeDeadlineSeconds }}
   template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: migrate-job
+        {{- include "django.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -25,15 +29,15 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-      - name: pre-install-job
+      - name: migrate-job
         securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        {{- if .Values.preInstall.resources }}        
-        resources: {{ toYaml .Values.preInstall.resources | nindent 12 }}
+        {{- if .Values.migrationJob.resources }}        
+        resources: {{ toYaml .Values.migrationJob.resources | nindent 12 }}
         {{- end }}
-        command: ["./manage.py","migrate"]
+        command: {{ .Values.migrationJob.command | default (list "./manage.py" "migrate") | toJson }}
         env:
           - name: DEBUG
             value: "False"
@@ -45,7 +49,7 @@ spec:
           - name: DATABASE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ include "django.postgresql.fullname" . }}
+                name: {{ default (include "django.postgresql.fullname" .) .Values.postgresql.auth.existingSecret }}
                 key: postgres-password
 {{- end }}
           - name: SECRET_KEY
@@ -57,4 +61,12 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ include "django.fullname" . }}
+        {{- with .Values.extraVolumeMounts }}
+        volumeMounts:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.extraVolumes }}
+      volumes:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
 {{- end }}
