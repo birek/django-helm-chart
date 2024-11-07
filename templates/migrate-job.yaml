@@ -1,3 +1,7 @@
+{{- if .Values.preInstall -}}
+  {{- fail ".Values.preInstall was moved to .Values.migrationJob, update your values accordingly" -}}
+{{- end -}}
+
 {{- if .Values.migrationJob.enabled -}}
 apiVersion: batch/v1
 kind: Job
@@ -34,7 +38,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        {{- if .Values.migrationJob.resources }}        
+        {{- if .Values.migrationJob.resources }}
         resources: {{ toYaml .Values.migrationJob.resources | nindent 12 }}
         {{- end }}
         command: {{ .Values.migrationJob.command | default (list "./manage.py" "migrate") | toJson }}
