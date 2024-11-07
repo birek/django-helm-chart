@@ -79,15 +79,15 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
-{{- define "django.redis.fullname" -}}
-{{- if .Values.redis.fullnameOverride -}}
-{{- .Values.redis.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- define "django.valkey.fullname" -}}
+{{- if .Values.valkey.fullnameOverride -}}
+{{- .Values.valkey.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- $name := default .Chart.Name -}}
 {{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}-redis-master
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}-valkey-master
 {{- else -}}
-{{- printf "%s-%s" .Release.Name "redis-master" | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" .Release.Name "valkey-master" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -131,30 +131,30 @@ Set postgresql port
 {{/*
 Set redis host
 */}}
-{{- define "django.redis.host" -}}
-{{- if .Values.redis.enabled -}}
-{{- template "django.redis.fullname" . -}}-redis-master
+{{- define "django.valkey.host" -}}
+{{- if .Values.valkey.enabled -}}
+{{- template "django.valkey.fullname" . -}}-valkey-master
 {{- else -}}
-{{- .Values.redis.host | quote -}}
+{{- .Values.valkey.host | quote -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Set redis url
 */}}
-{{- define "django.redis.url" -}}
-{{- if .Values.redis.enabled -}}
-redis://:{{ .Values.redis.auth.password }}@{{- template "django.redis.fullname" . -}}:{{- template "django.redis.port" . -}}/0
+{{- define "django.valkey.url" -}}
+{{- if .Values.valkey.enabled -}}
+redis://:{{ .Values.valkey.auth.password }}@{{- template "django.valkey.fullname" . -}}:{{- template "django.valkey.port" . -}}/0
 {{- end -}}
 {{- end -}}
 
 {{/*
 Set redis port
 */}}
-{{- define "django.redis.port" -}}
-{{- if .Values.redis.enabled -}}
+{{- define "django.valkey.port" -}}
+{{- if .Values.valkey.enabled -}}
     6379
 {{- else -}}
-{{- default "6379" .Values.redis.port -}}
+{{- default "6379" .Values.valkey.port -}}
 {{- end -}}
 {{- end -}}
