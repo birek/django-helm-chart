@@ -85,9 +85,9 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- else -}}
 {{- $name := default .Chart.Name -}}
 {{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}-valkey-master
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}-valkey-primary
 {{- else -}}
-{{- printf "%s-%s" .Release.Name "valkey-master" | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" .Release.Name "valkey-primary" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -133,7 +133,7 @@ Set redis host
 */}}
 {{- define "django.valkey.host" -}}
 {{- if .Values.valkey.enabled -}}
-{{- template "django.valkey.fullname" . -}}-valkey-master
+{{- template "django.valkey.fullname" . -}}-valkey-primary
 {{- else -}}
 {{- .Values.valkey.host | quote -}}
 {{- end -}}
