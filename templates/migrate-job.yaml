@@ -59,7 +59,7 @@ spec:
         {{- if not .Values.existingSecret }}
           - name: SECRET_KEY
             value: {{ required "env.secret.SECRET_KEY is a required value." .Values.env.secret.SECRET_KEY }}
-        {{ - else if .Values.postgresql.auth.existingSecret  }}
+        {{ else if .Values.postgresql.auth.existingSecret }}
           - name: SECRET_KEY
             value: {{ .Values.env.secret.SECRET_KEY }}
         {{- end }}
